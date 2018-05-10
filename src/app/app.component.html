@@ -1,21 +1,23 @@
-<h1>
-  {{title}}
-</h1>
+<div class="container-fluid">
+  <h1>
+    {{title}}
+  </h1>
+<!--   <pfng-chart-donut [chartData]="chartData" [config]="largeConfig"></pfng-chart-donut> -->
 
 
 
-<h4>Transfer custom data in Drag-and-Drop</h4>
-<div class="row" *ngFor="let data of initData.rows">
-  <div class="{{column.styleClass}}" *ngFor="let column of data.columns" [attr.name]="{id : index, data : name}">
-    <div class="panel panel-success">
+  <div class="row"  *ngFor="let data of initData.rows">
+    <div >
+    <div class="{{column.styleClass}}"  *ngFor="let column of data.columns" [attr.name]="{id : index, data : name}">
+      <div class="panel panel-success content " dnd-droppable (onDropSuccess)="transferDataSuccess($event,column)">
 
-      <div class="panel-body" dnd-droppable (onDropSuccess)="transferDataSuccess($event,column)">
-        <div class="panel panel-default">
-          <div class="panel-body">
-           
-              <div *ngFor="let widget of column.gadgets" dnd-draggable [dragEnabled]="true" [dragData]="widget">
-                <div dnd-droppable (onDropSuccess)="transferDataSuccess($event,column)">
-                    <div class="panel panel-success">
+        <div class="panel-body" style="background-color: #c1c1c1; height: auto;"  >
+
+          
+
+            <div *ngFor="let widget of column.gadgets" dnd-draggable [dragEnabled]="true" [dragData]="widget">
+              <div dnd-droppable (onDropSuccess)="transferDataSuccess($event,column)">
+                <div class="panel panel-success">
                   <div class="panel-heading">Available to drag</div>
                   <div class="panel-body">
                     <div class="panel panel-default">
@@ -24,31 +26,20 @@
                       </div>
                     </div>
                   </div>
-                </div>
+
+                
               </div>
+
+
+              <!--  <ng-template #pluginHost>
+                              Here be dragons
+                            </ng-template> -->
             </div>
-
-
-            <!--  <ng-template #pluginHost>
-                            Here be dragons
-                          </ng-template> -->
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-<div class="row">
-  <div class="col-sm-12">
-    <div class="panel panel-info">
-      <div class="panel-heading">Place to drop (Items:{{receivedData.length}})</div>
-      <div class="panel-body">
-        <div [hidden]="!receivedData.length > 0" *ngFor="let data of receivedData">
-          <div *ngFor="let widget of data.dragData.gadgets">
-            <dcl-wrapper [type]="widget"></dcl-wrapper>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
+
 </div>

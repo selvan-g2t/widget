@@ -24,6 +24,34 @@ export class AppComponent {
     this.compiler = this.injector.get(Compiler);
   }
 
+  chartData: any[] = [
+    ['Cats', 2],
+    ['Hamsters', 1],
+    ['Fish', 3],
+    ['Dogs', 2]
+  ];
+
+  largeConfig: any = {
+    chartId: 'exampleDonut',
+    colors: {
+      Cats: '#0088ce',     // blue
+      Hamsters: '#3f9c35', // green
+      Fish: '#ec7a08',     // orange
+      Dogs: '#cc0000'      // red
+    },
+    data: {
+      onclick: (data: any, element: any) => {
+        alert('You clicked on donut arc: ' + data.id);
+      }
+    },
+    donut: {
+      title: 'Animals'
+    },
+    legend: {
+      show: true
+    }
+  };
+
   load() {
     fetch(this.href)
       .then(response => response.text())
@@ -50,6 +78,25 @@ export class AppComponent {
   receivedData: Array<any> = [];
 
   transferDataSuccess($event: any, where) {
+    console.log($event)
+    console.log(where)
+    
+        // remove instance representation from model
+        this.initData.rows.forEach(function (row) {
+            row.columns.forEach(function (column) {
+                if (column.gadgets) {
+                    for (let i = column.gadgets.length - 1; i >= 0; i--) {
+
+                        if (column.gadgets[i].instanceId === $event.dragData.instanceId) {
+
+                            column.gadgets.splice(i, 1);
+
+                            break;
+                        }
+                    }
+                }
+            });
+        });
 
     where.gadgets.push($event.dragData)
     console.log(this.initData)
@@ -64,15 +111,20 @@ export class AppComponent {
             "columns": [
                 {
                     "gadgets": [{
+                        "moduleName":"TestingModule",
+                        "compoentName":"testing",
                       "widgetId":"new-1",
+                      "instanceId": 1499912903549,
                       "widgetName":"widget 1",
                       "url":"https://raw.githubusercontent.com/selvan-g2t/system/master/src/app/some-module/new.js"
                     }],
-                    "styleClass": "col-md-3"
+                    "styleClass": "col-xs-6"
                 },
                 {
                     "gadgets": [
                         {
+                            "moduleName":"TestingModule",
+                        "compoentName":"testing",
                           "widgetId":"test-1",
                           "widgetName":"widget 2",
                           "url":"https://raw.githubusercontent.com/selvan-g2t/system/master/src/app/some-module/test.js",
@@ -142,11 +194,18 @@ export class AppComponent {
                             ]
                         }
                     ],
-                    "styleClass": "col-md-6"
+                    "styleClass": "col-xs-6"
                 },
                 {
-                    "gadgets": [],
-                    "styleClass": "col-md-3"
+                    "gadgets": [{
+                        "instanceId": 1499911231569,
+                        "moduleName":"ChartsModule",
+                        "compoentName":"chart",
+                        "widgetId":"new-3",
+                        "widgetName":"widget 3",
+                        "url":"../assets/chart.js"
+                      }],
+                    "styleClass": "col-xs-6"
                 }
             ]
         }

@@ -3,6 +3,8 @@ import {QueryList, Injector, ReflectiveInjector, NgModule, Component, Compiler, 
 
 import * as AngularCore from '@angular/core';
 import * as AngularCommon from '@angular/common';
+import * as patternflyNg from 'patternfly-ng';
+
 import { COMPILER_PROVIDERS } from '@angular/compiler';
 
 
@@ -38,13 +40,14 @@ export class DclWrapper {
       const exports = {}; // this will hold module exports
       const modules = {   // this is the list of modules accessible by plugin
         '@angular/core': AngularCore,
-        '@angular/common': AngularCommon
+        '@angular/common': AngularCommon,
+        'patternfly-ng':patternflyNg
+        
       };
-
       const require = (module) => modules[module]; // shim 'require'
       eval(source); // interpret the plugin source
-      const mwcf = this.compiler.compileModuleAndAllComponentsSync(exports['TestingModule']);
-      const getModule = mwcf.componentFactories.find(e => e.selector === 'testing');
+      const mwcf = this.compiler.compileModuleAndAllComponentsSync(exports[this.type.moduleName]);
+      const getModule = mwcf.componentFactories.find(e => e.selector === this.type.compoentName);
       const viewContainerRef = this.target;
       viewContainerRef.clear();
       this.cmpRef = viewContainerRef.createComponent(getModule);
