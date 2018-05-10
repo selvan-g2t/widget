@@ -1,9 +1,9 @@
 import * as AngularCore from '@angular/core';
 import * as AngularCommon from '@angular/common';
-import { Compiler,QueryList, Component, Injector, ReflectiveInjector, ViewChild, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
+import { Compiler,QueryList,TemplateRef, Component, Injector, ReflectiveInjector, ViewChild, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import { COMPILER_PROVIDERS } from '@angular/compiler';
-
-
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -13,44 +13,85 @@ export class AppComponent {
   title = 'widget loading';
   href = 'https://raw.githubusercontent.com/selvan-g2t/system/master/src/app/some-module/test.js';
 
+  dates: any[] = ['dates'];
+  chartData: any = {
+    dataAvailable: true,
+    total: 100,
+    xData: this.dates,
+    yData: ['used', 10, 20, 30, 20, 30, 10, 14, 20, 25, 68, 54, 56, 78, 56, 67, 88, 76, 65, 87, 76]
+  };
+  config: any = {
+    chartId: 'exampleSparkline',
+    chartHeight: 60,
+    tooltipType: 'default'
+  };
 
   @ViewChild("pluginHost", {read: ViewContainerRef}) pluginHost: ViewContainerRef;
 
   private injector: Injector;
   private compiler: Compiler;
+  modalRef: BsModalRef;
 
-  constructor(injector: Injector, private _vcr: ViewContainerRef,private componentFactoryResolver: ComponentFactoryResolver) {
+  constructor(injector: Injector, 
+    private _vcr: ViewContainerRef,
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private modalService: BsModalService
+) 
+    {
     this.injector = ReflectiveInjector.resolveAndCreate(COMPILER_PROVIDERS, injector);
     this.compiler = this.injector.get(Compiler);
+
+    let today = new Date();
+    for (let d = 20 - 1; d >= 0; d--) {
+      this.dates.push(new Date(today.getTime() - (d * 24 * 60 * 60 * 1000)));
+    }
+  }
+  openModal(template: TemplateRef<any>) {
+
+    this.modalRef = this.modalService.show(template);
   }
 
-  chartData: any[] = [
-    ['Cats', 2],
-    ['Hamsters', 1],
-    ['Fish', 3],
-    ['Dogs', 2]
-  ];
-
-  largeConfig: any = {
-    chartId: 'exampleDonut',
-    colors: {
-      Cats: '#0088ce',     // blue
-      Hamsters: '#3f9c35', // green
-      Fish: '#ec7a08',     // orange
-      Dogs: '#cc0000'      // red
+  widgetList = [
+    {
+        "instanceId": 1499911421569,
+        "moduleName":"SparkModule",
+        "compoentName":"spark",
+        "widgetId":"new-3",
+        "widgetName":"spark chart",
+        "url":"https://raw.githubusercontent.com/selvan-g2t/system/master/src/app/some-module/spark.js"
     },
-    data: {
-      onclick: (data: any, element: any) => {
-        alert('You clicked on donut arc: ' + data.id);
+    {
+        "instanceId": 1499911231569,
+        "moduleName":"ChartsModule",
+        "compoentName":"chart",
+        "widgetId":"new-3",
+        "widgetName":"Donut chart",
+        "url":"https://raw.githubusercontent.com/selvan-g2t/system/master/src/app/some-module/chart.js"
       }
-    },
-    donut: {
-      title: 'Animals'
-    },
-    legend: {
-      show: true
-    }
-  };
+  ]
+
+  loadWidget(widget){
+    this.modalRef.hide();
+        // remove instance representation from model
+
+            for (let j = 0; j<this.initData.rows.length; j++) {
+                let row = this.initData.rows[j]
+                if (row.columns) {
+                    for (let i = 0 ;i<row.columns.length; i++) {
+                        let gadgets:any = row.columns[i].gadgets;
+                        if(gadgets.length ==0){
+                            gadgets.push(widget)
+                            return;
+                        }
+                        
+                    }
+                }
+            }
+
+
+    
+        
+  }
 
   load() {
     fetch(this.href)
@@ -103,6 +144,25 @@ export class AppComponent {
    //   this.receivedData.push($event);
   }
 
+  removeWidgets(widget){
+              // remove instance representation from model
+              this.initData.rows.forEach(function (row) {
+                row.columns.forEach(function (column) {
+                    if (column.gadgets) {
+                        for (let i = column.gadgets.length - 1; i >= 0; i--) {
+    
+                            if (column.gadgets[i].instanceId === widget.instanceId) {
+    
+                                column.gadgets.splice(i, 1);
+    
+                                break;
+                            }
+                        }
+                    }
+                });
+            });
+  }
+
   initData = {
     "boardInstanceId": 1,
     "id": 9,
@@ -118,7 +178,7 @@ export class AppComponent {
                       "widgetName":"widget 1",
                       "url":"https://raw.githubusercontent.com/selvan-g2t/system/master/src/app/some-module/new.js"
                     }],
-                    "styleClass": "col-xs-6"
+                    "styleClass": "col-md-6"
                 },
                 {
                     "gadgets": [
@@ -194,18 +254,31 @@ export class AppComponent {
                             ]
                         }
                     ],
-                    "styleClass": "col-xs-6"
+                    "styleClass": "col-md-6"
                 },
                 {
-                    "gadgets": [{
-                        "instanceId": 1499911231569,
+                    "gadgets": [ {
+                        "instanceId": 1423423231569,
                         "moduleName":"ChartsModule",
                         "compoentName":"chart",
                         "widgetId":"new-3",
-                        "widgetName":"widget 3",
-                        "url":"../assets/chart.js"
+                        "widgetName":"Donut chart",
+                        "url":"https://raw.githubusercontent.com/selvan-g2t/system/master/src/app/some-module/chart.js"
                       }],
-                    "styleClass": "col-xs-6"
+                    "styleClass": "col-md-6"
+                }
+            ]
+        },
+        {
+            "columns":[
+                
+                {
+                    "gadgets": [
+                       
+                        
+
+                ],
+                    "styleClass": "col-md-6"
                 }
             ]
         }

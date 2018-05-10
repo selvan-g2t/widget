@@ -1,9 +1,20 @@
-.demo{
-    margin-bottom: -99999px;
-    padding-bottom: 99999px;
-    background-color:#efefef;
+
+
+.equalheight {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    margin-top: 20px;
 }
 
-#equalheight {
-    overflow: hidden; 
+.remove-icon{
+display:none
 }
+.hover-board:hover .remove-icon {
+	display: block;
+}
+.remove-icon .pficon{
+    cursor: pointer;
+}
+

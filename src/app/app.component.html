@@ -1,45 +1,101 @@
 <div class="container-fluid">
-  <h1>
-    {{title}}
-  </h1>
-<!--   <pfng-chart-donut [chartData]="chartData" [config]="largeConfig"></pfng-chart-donut> -->
+  <div class="page-header">
+      <h1>
+          {{title}}
+        </h1>
+      <!--   <pfng-chart-sparkline [chartData]="chartData" [config]="config"></pfng-chart-sparkline> -->
+        <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-primary" (click)="openModal(template)">Add</button>
+        </div>
+      </div>
+  </div>
+    
 
 
 
-  <div class="row"  *ngFor="let data of initData.rows">
-    <div >
-    <div class="{{column.styleClass}}"  *ngFor="let column of data.columns" [attr.name]="{id : index, data : name}">
-      <div class="panel panel-success content " dnd-droppable (onDropSuccess)="transferDataSuccess($event,column)">
+  <div class="row equalheight" *ngFor="let data of initData.rows">
+    <div class="{{column.styleClass}}" *ngFor="let column of data.columns">
+      <div class="col-md-12" style="min-height: 370px;background-color: #c1c1c1" dnd-droppable (onDropSuccess)="transferDataSuccess($event,column)">
+        <div *ngIf="!column.gadgets.length" style="line-height: 370px;font-size: 20px; text-align: center;color: #ffffff">
+          Add widget
 
-        <div class="panel-body" style="background-color: #c1c1c1; height: auto;"  >
+        </div>
 
-          
+        <div *ngFor="let widget of column.gadgets" class="col-md-12" dnd-draggable [dragEnabled]="true" [dragData]="widget">
+          <div class="row row-cards-pf" style="margin-top: 20px;">
+            <div class="card-pf">
+              <div class="card-pf-heading hover-board">
+                  <div class="remove-icon">
+                    
+                      <span class="pficon pficon-delete pull-right"  (click)="removeWidgets(widget)"></span>
+                      <span class="pficon pficon-settings pull-right" style="margin-right: 5px"></span>
+                  </div>
+                <h2 class="card-pf-title">
+                  {{widget.widgetName}}
+                </h2>
 
-            <div *ngFor="let widget of column.gadgets" dnd-draggable [dragEnabled]="true" [dragData]="widget">
-              <div dnd-droppable (onDropSuccess)="transferDataSuccess($event,column)">
-                <div class="panel panel-success">
-                  <div class="panel-heading">Available to drag</div>
-                  <div class="panel-body">
-                    <div class="panel panel-default">
-                      <div class="panel-body">
-                        <dcl-wrapper [type]="widget"></dcl-wrapper>
-                      </div>
+              </div>
+              <div class="card-pf-body">
+                <dcl-wrapper [type]="widget"></dcl-wrapper>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- /row -->
+
+
+
+  <!-- <div class="row" *ngFor="let data of initData.rows">
+    <div class="{{column.styleClass}}" *ngFor="let column of data.columns" [attr.name]="{id : index, data : name}">
+      <div class="panel panel-success content " style="min-height: 370px;background-color: #c1c1c1" dnd-droppable (onDropSuccess)="transferDataSuccess($event,column)">
+        <div class="panel-body">
+          <div *ngFor="let widget of column.gadgets" class="col-md-12" dnd-draggable [dragEnabled]="true" [dragData]="widget">
+            <div>
+              <div class="panel panel-success">
+                <div class="panel-heading">Available to drag</div>
+                <div class="panel-body">
+                  <div class="panel panel-default">
+                    <div class="panel-body">
+                      <dcl-wrapper [type]="widget"></dcl-wrapper>
                     </div>
                   </div>
-
-                
+                </div>
               </div>
-
-
-              <!--  <ng-template #pluginHost>
-                              Here be dragons
-                            </ng-template> -->
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  </div>
+  </div> -->
 
 </div>
+
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ul>
+      <li *ngFor="let list of widgetList">
+        <a href="javascript:void(0)" (click)="loadWidget(list)">
+            {{list.compoentName}}
+        </a>
+        
+      </li>
+    </ul>
+    
+  </div>
+</ng-template>
